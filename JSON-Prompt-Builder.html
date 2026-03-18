@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kling v3 Pro — Motion Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090909;
+    --bg-card: #0f0f0f;
+    --bg-card2: #141414;
+    --bg-elevated: #1a1a1a;
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.13);
+    --amber: #f0a030;
+    --amber-dim: rgba(240,160,48,0.15);
+    --amber-glow: rgba(240,160,48,0.08);
+    --amber-border: rgba(240,160,48,0.3);
+    --red-dim: rgba(220,80,60,0.15);
+    --red: #e05040;
+    --red-border: rgba(220,80,60,0.35);
+    --text-primary: #e8e4dc;
+    --text-secondary: #7a7670;
+    --text-muted: #3e3c38;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --font-serif: 'Instrument Serif', serif;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --transition: 0.18s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { background: var(--bg); }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    min-height: 100vh;
+  }
+
+  /* ─── LAYOUT ─── */
+  .app {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    margin-bottom: 40px;
+    padding-bottom: 28px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .header-left {}
+  .header-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background: var(--amber);
+    opacity: 0.7;
+  }
+  .header-title {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+  .header-title span {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+  }
+  .header-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  .header-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 5px 12px;
+    border: 0.5px solid var(--amber-border);
+    border-radius: 20px;
+    color: var(--amber);
+    background: var(--amber-glow);
+    white-space: nowrap;
+    letter-spacing: 0.08em;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    margin-bottom: 32px;
+  }
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .section-icon {
+    width: 26px;
+    height: 26px;
+    border: 0.5px solid var(--border-bright);
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .section-line {
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+
+  /* ─── GRID LAYOUTS ─── */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    transition: border-color var(--transition);
+  }
+  .card:hover {
+    border-color: var(--border-bright);
+  }
+
+  /* ─── LABELS ─── */
+  .lbl {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 7px;
+  }
+  .lbl + .lbl, .mt { margin-top: 14px; }
+
+  /* ─── SELECTS ─── */
+  select {
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 0.5px solid var(--border-bright);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 400;
+    padding: 8px 10px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%237a7670' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    transition: border-color var(--transition), background-color var(--transition);
+  }
+  select:hover {
+    border-color: rgba(255,255,255,0.2);
+    background-color: #1e1e1e;
+  }
+  select:focus {
+    border-color: var(--amber-border);
+    box-shadow: 0 0 0 2px var(--amber-glow);
+  }
+  select option {
+    background: #1a1a1a;
+    color: var(--text-primary);
+  }
+
+  /* ─── RANGE SLIDERS ─── */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+  }
+  .slider-row input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background: var(--bg-elevated);
+    border-radius: 2px;
+    outline: none;
+    border: 0.5px solid var(--border);
+    position: relative;
+    cursor: pointer;
+  }
+  .slider-row input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(240,160,48,0.4);
+    transition: box-shadow var(--transition), transform var(--transition);
+  }
+  .slider-row input[type=range]:hover::-webkit-slider-thumb {
+    box-shadow: 0 0 14px rgba(240,160,48,0.6);
+    transform: scale(1.15);
+  }
+  .slider-row input[type=range]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: none;
+    cursor: pointer;
+  }
+  .slider-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--amber);
+    background: var(--amber-dim);
+    border: 0.5px solid var(--amber-border);
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    min-width: 40px;
+    text-align: center;
+  }
+
+  /* ─── TAG TOGGLES ─── */
+  .tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    transition: all var(--transition);
+    user-select: none;
+    letter-spacing: 0.02em;
+  }
+  .tag:hover {
+    border-color: var(--border-bright);
+    color: var(--text-primary);
+  }
+  .tag.on {
+    background: var(--amber-dim);
+    color: var(--amber);
+    border-color: var(--amber-border);
+  }
+  .tag.warn.on {
+    background: var(--red-dim);
+    color: var(--red);
+    border-color: var(--red-border);
+  }
+  .tag.warn:hover {
+    border-color: var(--red-border);
+    color: var(--red);
+  }
+
+  /* ─── TEXTAREA ─── */
+  textarea {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 58px;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    line-height: 1.6;
+  }
+  textarea::placeholder { color: var(--text-muted); }
+  textarea:focus {
+    border-color: var(--amber-border);
+    box-shadow: 0 0 0 2px var(--amber-glow);
+  }
+
+  /* ─── GENERATE BUTTON ─── */
+  .btn-generate {
+    width: 100%;
+    padding: 14px 24px;
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    background: var(--amber);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-generate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+  }
+  .btn-generate:hover::before {
+    transform: translateX(100%);
+  }
+  .btn-generate:hover {
+    background: #f5b040;
+    box-shadow: 0 0 24px rgba(240,160,48,0.35), 0 4px 16px rgba(0,0,0,0.4);
+    transform: translateY(-1px);
+  }
+  .btn-generate:active {
+    transform: translateY(0);
+  }
+
+  /* ─── OUTPUT ─── */
+  .output-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .output-title {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .output-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 6px var(--amber);
+  }
+  .btn-copy {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 5px 14px;
+    background: transparent;
+    border: 0.5px solid var(--border-bright);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+    letter-spacing: 0.05em;
+  }
+  .btn-copy:hover {
+    border-color: var(--amber-border);
+    color: var(--amber);
+    background: var(--amber-glow);
+  }
+  .btn-copy.ok {
+    border-color: rgba(100,200,100,0.4);
+    color: #78cc78;
+    background: rgba(100,200,100,0.08);
+  }
+  .output-box {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 300;
+    color: #c8c4bc;
+    white-space: pre;
+    overflow-x: auto;
+    max-height: 380px;
+    overflow-y: auto;
+    line-height: 1.7;
+    transition: border-color var(--transition);
+  }
+  .output-box:hover { border-color: var(--border-bright); }
+  .output-box::-webkit-scrollbar { width: 4px; height: 4px; }
+  .output-box::-webkit-scrollbar-track { background: transparent; }
+  .output-box::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+  /* ─── DIVIDERS ─── */
+  .mt10 { margin-top: 10px; }
+  .mt14 { margin-top: 14px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .g2, .g3 { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; }
+    .app { padding: 24px 16px 60px; }
+    .header-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-eyebrow">Motion · Emotion · Gesture</div>
+      <h1 class="header-title">Kling v3 <span>Pro</span> Builder</h1>
+      <p class="header-subtitle">Compose precise motion prompts for image-to-video generation</p>
+    </div>
+    <div class="header-badge">i2v · json</div>
+  </header>
+
+  <!-- CAMERA MOTION -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon">⟳</div>
+      <span class="section-title">Camera Motion</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <span class="lbl">Movement type</span>
+        <select id="cam_type">
+          <option value="static">Static — no movement</option>
+          <option value="push_in">Push in — slow dolly forward</option>
+          <option value="pull_back">Pull back — reveal wide</option>
+          <option value="orbit_left">Orbit left — arc around character</option>
+          <option value="orbit_right">Orbit right — arc around character</option>
+          <option value="pan_left">Pan left — horizontal sweep</option>
+          <option value="pan_right">Pan right — horizontal sweep</option>
+          <option value="tilt_up">Tilt up — rise from low angle</option>
+          <option value="tilt_down">Tilt down — descend from high</option>
+          <option value="handheld">Handheld — subtle organic wobble</option>
+          <option value="crane_up">Crane up — vertical lift</option>
+          <option value="crane_down">Crane down — vertical descent</option>
+        </select>
+        <span class="lbl mt">Speed</span>
+        <div class="slider-row">
+          <input type="range" min="1" max="5" value="2" step="1" id="cam_speed">
+          <span class="slider-value" id="cam_speed_v">slow</span>
+        </div>
+      </div>
+      <div class="card">
+        <span class="lbl">Start framing</span>
+        <select id="cam_start">
+          <option value="full body, character centered in frame">Full body centered</option>
+          <option value="medium shot, waist to head">Medium shot (waist up)</option>
+          <option value="close-up on face">Close-up on face</option>
+          <option value="extreme close-up on eyes">Extreme close-up — eyes</option>
+          <option value="3/4 angle, slight left profile">3/4 angle — left</option>
+          <option value="3/4 angle, slight right profile">3/4 angle — right</option>
+          <option value="low angle, looking up at character">Low angle looking up</option>
+          <option value="high angle, looking down at character">High angle looking down</option>
+          <option value="over-the-shoulder POV">Over-shoulder POV</option>
+        </select>
+        <span class="lbl mt">End framing</span>
+        <select id="cam_end">
+          <option value="full body, character centered in frame">Full body centered</option>
+          <option value="medium shot, waist to head">Medium shot (waist up)</option>
+          <option value="close-up on face">Close-up on face</option>
+          <option value="3/4 angle, slight left profile">3/4 angle — left</option>
+          <option value="3/4 angle, slight right profile">3/4 angle — right</option>
+          <option value="wide establishing shot, character small in frame">Wide establishing</option>
+          <option value="extreme close-up on eyes">Extreme close-up — eyes</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="g3 mt10">
+      <div class="card">
+        <span class="lbl">Focal length feel</span>
+        <select id="focal">
+          <option value="wide angle, slight perspective distortion">Wide angle</option>
+          <option value="standard lens, natural perspective">Standard (50mm feel)</option>
+          <option value="telephoto compression, flattened depth">Telephoto compressed</option>
+          <option value="shallow depth of field, background softly blurred">Shallow DOF — bokeh</option>
+        </select>
+      </div>
+      <div class="card">
+        <span class="lbl">Transition curve</span>
+        <select id="easing">
+          <option value="ease in-out, smooth deceleration">Ease in-out (smooth)</option>
+          <option value="constant speed, linear motion">Linear (constant)</option>
+          <option value="slow ease-in, fast finish">Ease in</option>
+          <option value="fast start, slow ease-out">Ease out</option>
+        </select>
+      </div>
+      <div class="card">
+        <span class="lbl">Duration (sec)</span>
+        <div class="slider-row">
+          <input type="range" min="3" max="10" value="5" step="1" id="dur">
+          <span class="slider-value" id="dur_v">5s</span>
+        </div>
+        <span class="lbl mt">CFG scale</span>
+        <div class="slider-row">
+          <input type="range" min="0.1" max="1.0" value="0.5" step="0.1" id="cfg">
+          <span class="slider-value" id="cfg_v">0.5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FACIAL EMOTION -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon">◎</div>
+      <span class="section-title">Facial Emotion</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <span class="lbl">Primary emotion</span>
+        <select id="emotion">
+          <option value="calm and composed, neutral resting expression">Calm / neutral</option>
+          <option value="warm confident smile, eyes slightly crinkled">Warm smile</option>
+          <option value="broad joyful smile, teeth slightly visible">Joyful / happy</option>
+          <option value="serious and authoritative, strong focused gaze">Serious / authoritative</option>
+          <option value="thoughtful and contemplative, slight furrow">Thoughtful</option>
+          <option value="proud and dignified, subtle upward chin tilt">Proud / dignified</option>
+          <option value="welcoming and friendly, soft eyes">Welcoming / friendly</option>
+          <option value="concerned and empathetic, gentle brow furrow">Concerned / empathetic</option>
+          <option value="determined and resolute, firm jaw set">Determined</option>
+          <option value="surprised and attentive, raised eyebrows">Surprised / attentive</option>
+        </select>
+        <span class="lbl mt">Emotion intensity</span>
+        <div class="slider-row">
+          <input type="range" min="1" max="10" value="5" step="1" id="emo_int">
+          <span class="slider-value" id="emo_int_v">5</span>
+        </div>
+      </div>
+      <div class="card">
+        <span class="lbl">Eye behavior</span>
+        <select id="eyes">
+          <option value="steady direct eye contact with the camera">Direct eye contact</option>
+          <option value="eyes slowly looking left then returning to camera">Look left — return</option>
+          <option value="eyes slowly looking right then returning to camera">Look right — return</option>
+          <option value="eyes looking down thoughtfully then up">Look down — look up</option>
+          <option value="slow natural blink every 3 seconds">Natural blinking</option>
+          <option value="eyes slightly squinted in concentration">Squint — concentrated</option>
+          <option value="wide open eyes, alert and attentive">Wide open — alert</option>
+        </select>
+        <span class="lbl mt">Mouth behavior</span>
+        <select id="mouth">
+          <option value="lips gently closed, relaxed jaw">Lips closed — relaxed</option>
+          <option value="slight upward curl at corners of mouth">Subtle smile curl</option>
+          <option value="mouth slightly open as if about to speak">Slightly open — about to speak</option>
+          <option value="mouth moving as if speaking silently">Lips moving — speaking</option>
+          <option value="slow exhale, lips parting gently">Slow exhale</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card mt10">
+      <span class="lbl">Emotion arc (transition)</span>
+      <select id="emo_arc">
+        <option value="emotion remains consistent throughout the clip">Hold — no change</option>
+        <option value="begins neutral, gradually shifts to a warm smile">Neutral → warm smile</option>
+        <option value="begins with a confident smile, slowly relaxes to calm">Smile → calm</option>
+        <option value="begins serious, softens to approachable by the end">Serious → approachable</option>
+        <option value="begins thoughtful, ends with a decisive confident look">Thoughtful → decisive</option>
+        <option value="subtle emotional build — increasing warmth and presence">Build — increasing warmth</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- BODY GESTURES -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon">⌾</div>
+      <span class="section-title">Body Gestures</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <span class="lbl">Head movement</span>
+        <select id="head">
+          <option value="head remains centered and still">Still — centered</option>
+          <option value="slow confident nod, single downward motion">Single confident nod</option>
+          <option value="repeated gentle nodding in agreement">Gentle repeated nod</option>
+          <option value="slow head turn to the left">Turn left — slow</option>
+          <option value="slow head turn to the right">Turn right — slow</option>
+          <option value="slight chin tuck, dignified tilt down">Chin tuck — dignified</option>
+          <option value="slight upward chin raise, confident tilt up">Chin raise — confident</option>
+          <option value="head tilts slightly to one side, listening pose">Slight head tilt — listening</option>
+        </select>
+        <span class="lbl mt">Shoulder posture</span>
+        <select id="shoulders">
+          <option value="shoulders relaxed and square, upright posture">Relaxed square — upright</option>
+          <option value="shoulders pulled back, chest open, commanding stance">Pulled back — commanding</option>
+          <option value="slight forward lean, engaged and attentive">Slight forward lean</option>
+          <option value="one shoulder slightly elevated, casual stance">One shoulder raised — casual</option>
+          <option value="gentle shoulder rise with exhale, breathing visible">Shoulder rise with breath</option>
+        </select>
+      </div>
+      <div class="card">
+        <span class="lbl">Right arm / hand</span>
+        <select id="rarm">
+          <option value="right arm resting naturally at side">Resting at side</option>
+          <option value="right hand placed over heart, sincere gesture">Hand over heart</option>
+          <option value="right arm slowly raising to waist height, open palm">Arm raise — open palm</option>
+          <option value="right index finger pointing forward gently">Point forward</option>
+          <option value="right hand gesturing outward as if presenting">Present — outward gesture</option>
+          <option value="right hand fingers lightly touching chin, thinking pose">Fingers to chin — thinking</option>
+          <option value="slow wave with right hand, greeting">Slow friendly wave</option>
+          <option value="right hand moves in a slow arc while speaking">Speaking arc gesture</option>
+        </select>
+        <span class="lbl mt">Left arm / hand</span>
+        <select id="larm">
+          <option value="left arm resting naturally at side">Resting at side</option>
+          <option value="left arm crossed over body, relaxed fold">Arm crossed — relaxed</option>
+          <option value="left hand raised to mid-chest height, open palm">Raised — open palm</option>
+          <option value="both arms extended slightly forward, welcoming pose">Both arms — welcoming</option>
+          <option value="left hand placed on right forearm, respectful posture">Hand on forearm — respectful</option>
+          <option value="left hand gently gesturing downward, calming motion">Downward calm gesture</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="g2 mt10">
+      <div class="card">
+        <span class="lbl">Body stance</span>
+        <select id="stance">
+          <option value="standing upright, feet shoulder-width apart, weight evenly distributed">Upright — balanced</option>
+          <option value="slight weight shift to right leg, relaxed natural stance">Weight shift right — relaxed</option>
+          <option value="weight shift to left leg, casual confident lean">Weight shift left — confident</option>
+          <option value="small step forward with right foot">Step forward — right</option>
+          <option value="gentle sway, subtle natural body motion">Gentle sway</option>
+          <option value="perfectly still, statue-like composed stance">Perfectly still</option>
+        </select>
+      </div>
+      <div class="card">
+        <span class="lbl">Breathing / micro-motion</span>
+        <select id="breath">
+          <option value="natural subtle chest breathing visible throughout">Natural chest breathing</option>
+          <option value="slow deep breath, chest visibly expanding then releasing">Deep breath — visible expand</option>
+          <option value="no visible breathing, very composed stillness">No visible breathing — still</option>
+          <option value="slight fabric movement from breathing, clothing stirs gently">Fabric movement from breath</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEGATIVE PROMPTS -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon">⊘</div>
+      <span class="section-title">Negative Prompts</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="tag-group" id="neg_tags">
+      <span class="tag warn on" data-v="blurry motion">blurry motion</span>
+      <span class="tag warn on" data-v="unnatural movement">unnatural movement</span>
+      <span class="tag warn on" data-v="distorted face">distorted face</span>
+      <span class="tag warn on" data-v="flickering">flickering</span>
+      <span class="tag warn on" data-v="stiff robotic gestures">stiff robotic gestures</span>
+      <span class="tag warn" data-v="warped clothing">warped clothing</span>
+      <span class="tag warn" data-v="extra limbs">extra limbs</span>
+      <span class="tag warn" data-v="jitter">jitter</span>
+      <span class="tag warn" data-v="floating hands">floating hands</span>
+      <span class="tag warn" data-v="teeth deformation">teeth deformation</span>
+      <span class="tag warn" data-v="eye glitch">eye glitch</span>
+      <span class="tag warn" data-v="temporal inconsistency">temporal inconsistency</span>
+    </div>
+  </div>
+
+  <!-- ADDITIONAL DETAIL -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon">+</div>
+      <span class="section-title">Additional Detail</span>
+      <div class="section-line"></div>
+    </div>
+    <textarea id="extra" placeholder="e.g. shemagh fabric sways slightly, subtle cloth physics, lighting stays consistent..."></textarea>
+  </div>
+
+  <!-- GENERATE -->
+  <button class="btn-generate" onclick="gen()">Generate Detailed JSON Prompt</button>
+
+  <!-- OUTPUT -->
+  <div class="output-bar">
+    <span class="output-title">JSON Output</span>
+    <button class="btn-copy" id="cpbtn" onclick="cp()">Copy JSON</button>
+  </div>
+  <div class="output-box" id="out">{ configure controls above and click generate }</div>
+
+</div>
+
+<script>
+  const speeds = ['','very slow','slow','moderate','fast','very fast'];
+
+  function sv(id, map) {
+    const el = document.getElementById(id);
+    const out = document.getElementById(id + '_v');
+    if (!out) return;
+    function update() {
+      const v = parseFloat(el.value);
+      out.textContent = map ? map[Math.round(v)] : (id === 'dur' ? v + 's' : v.toFixed(1));
+    }
+    el.addEventListener('input', update);
+    update();
+  }
+
+  sv('cam_speed', speeds);
+  sv('dur');
+  sv('cfg');
+  sv('emo_int');
+
+  document.querySelectorAll('.tag').forEach(t => {
+    t.addEventListener('click', () => t.classList.toggle('on'));
+  });
+
+  function g(id) { return document.getElementById(id).value; }
+  function gi(id) { return parseInt(document.getElementById(id).value); }
+  function gf(id) { return parseFloat(document.getElementById(id).value); }
+
+  function intensityWord(v) {
+    if (v <= 2) return 'very subtle';
+    if (v <= 4) return 'subtle';
+    if (v <= 6) return 'natural and fluid';
+    if (v <= 8) return 'expressive';
+    return 'highly expressive';
+  }
+
+  function gen() {
+    const neg = Array.from(document.querySelectorAll('#neg_tags .tag.on')).map(t => t.dataset.v);
+    const extra = document.getElementById('extra').value.trim();
+    const emo_int = gi('emo_int');
+    const cam_spd = gi('cam_speed');
+
+    const json = {
+      model: "kling-v3-pro",
+      mode: "i2v",
+      duration: gi('dur'),
+      cfg_scale: parseFloat(gf('cfg').toFixed(1)),
+      camera: {
+        motion_type: g('cam_type'),
+        speed: speeds[cam_spd],
+        start_frame: g('cam_start'),
+        end_frame: g('cam_end'),
+        focal_length: g('focal'),
+        easing: g('easing')
+      },
+      emotion: {
+        primary: g('emotion'),
+        intensity: emo_int,
+        intensity_description: intensityWord(emo_int),
+        arc: g('emo_arc'),
+        eyes: g('eyes'),
+        mouth: g('mouth')
+      },
+      body_gestures: {
+        head: g('head'),
+        shoulders: g('shoulders'),
+        right_arm: g('rarm'),
+        left_arm: g('larm'),
+        stance: g('stance'),
+        breathing: g('breath')
+      },
+      motion_prompt: buildPrompt(cam_spd, emo_int, extra),
+      negative_prompt: neg.join(', ')
+    };
+
+    document.getElementById('out').textContent = JSON.stringify(json, null, 2);
+  }
+
+  function buildPrompt(cam_spd, emo_int, extra) {
+    const camDesc = `${g('cam_type').replace(/_/g, ' ')} camera at ${speeds[cam_spd]} speed, starting on a ${g('cam_start')}, ending on a ${g('cam_end')}, ${g('focal')}, with ${g('easing')} motion curve`;
+    const emoDesc = `facial expression: ${g('emotion')}, ${intensityWord(emo_int)} intensity, ${g('emo_arc')}, ${g('eyes')}, ${g('mouth')}`;
+    const gestDesc = `head: ${g('head')}; shoulders: ${g('shoulders')}; right arm: ${g('rarm')}; left arm: ${g('larm')}; body stance: ${g('stance')}; ${g('breath')}`;
+    let p = `${camDesc}. Character emotion — ${emoDesc}. Body gestures — ${gestDesc}.`;
+    if (extra) p += ` Additional: ${extra}.`;
+    return p;
+  }
+
+  function cp() {
+    const t = document.getElementById('out').textContent;
+    navigator.clipboard.writeText(t).then(() => {
+      const b = document.getElementById('cpbtn');
+      b.textContent = 'Copied!';
+      b.classList.add('ok');
+      setTimeout(() => { b.textContent = 'Copy JSON'; b.classList.remove('ok'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
